@@ -34,6 +34,11 @@ Both environments share the exact same dimensions (**17-D continuous state space
 | **`Walker2d-v5`** (Bipedal Walker) | $\mathbb{R}^{17}$ | $[-1, 1]^6$ | 8 ms | **Unstable:** Must actively balance its torso; terminates early if it **falls**. |
 | **`HalfCheetah-v5`** (Planar Runner) | $\mathbb{R}^{17}$ | $[-1, 1]^6$ | 50 ms | **Mechanically Stable:** Cannot fall (always runs 1,000 steps); tests gait coordination. |
 
+* **What is inside the 17-D State Vector** $s_t \in \mathbb{R}^{17}$?
+  * **8 positions/angles** (torso height $z$, torso pitch angle, and 6 joint angles: hip, knee, and ankle/foot on both legs) + **9 velocities** ($x$-velocity, $z$-velocity, torso angular velocity, and 6 joint angular velocities) = **17 continuous numbers**.
+* **What is inside the 6-D Action Vector** $a_t \in [-1, 1]^6$?
+  * **6 continuous motor torques** (each normalized between $-1.0$ and $+1.0$) applied to the 6 leg joints at every control step.
+
 ### Why Soft Actor-Critic (SAC) Instead of Tabular TD or Monte Carlo?
 * **Continuous Spaces** ($\mathbb{R}^{17} \times [-1,1]^6$): Tabular Q-learning cannot store infinite states, and standard greedy maximization $\arg\max_a Q(s,a)$ cannot search over infinite continuous motor torques.
 * **Why Not Monte Carlo?** 1,000-step episodes create high return variance, and on-policy updates discard past data.
