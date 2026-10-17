@@ -1,0 +1,29 @@
+# Python bytecode and virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+rlenv/
+.env
+
+# Reference papers and raw training logs
+papers/
+logs/
+runs/*/seed*/tb/
+
+# LaTeX build intermediates
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
