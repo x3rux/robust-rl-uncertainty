@@ -18,11 +18,11 @@ In this mid-semester phase, we train **Soft Actor-Critic (SAC)** baseline polici
 
 | # | Channel | Disturbance Type | Code Identifier | Intensity Unit |
 | :-: | :--- | :--- | :--- | :--- |
-| **1** | **Sensor Input** | Random Gaussian Sensor Noise | `obs_noise` | $\sigma$ ($\times$ per-dimension state std $\sigma_s$) |
-| **2** | **Sensor Input** | White-Box PGD Adversarial Attack | `obs_adv` | $\epsilon$ ($\times$ per-dimension state std $\sigma_s$) |
-| **3** | **Actuator** | Control-Step Action Delay | `act_delay` | Delayed control steps ($k \in \mathbb{Z}_{\ge 0}$) |
-| **4** | **Physics** | Body Mass & Inertia Scaling | `mass` | Multiplier ($0.4\times$ to $2.5\times$) |
-| **5** | **Physics** | Ground Sliding Friction Scaling | `friction` | Multiplier ($0.1\times$ to $3.0\times$) |
+| **1** | **Sensor Input** | Random Gaussian Sensor Noise | `obs_noise` | $\sigma$ (multiple of per-dimension state std $\sigma_s$) |
+| **2** | **Sensor Input** | White-Box PGD Adversarial Attack | `obs_adv` | $\epsilon$ (multiple of per-dimension state std $\sigma_s$) |
+| **3** | **Actuator** | Control-Step Action Delay | `act_delay` | Delayed control steps ($k \in \{0, 1, 2, 3, 4\}$) |
+| **4** | **Physics** | Body Mass & Inertia Scaling | `mass` | Multiplier (0.4× to 2.5×) |
+| **5** | **Physics** | Ground Sliding Friction Scaling | `friction` | Multiplier (0.1× to 3.0×) |
 
 ---
 
@@ -30,9 +30,9 @@ In this mid-semester phase, we train **Soft Actor-Critic (SAC)** baseline polici
 
 ![Normalized Degradation Curves](presentation/figures/degradation_all.png)
 
-* **Action Delay is Catastrophic:** A single step of latency reduces return by **$31\%$** on `Walker2d-v5` and **$70\%$** on `HalfCheetah-v5`; $2$ steps causes total failure ($0\%$ score).
-* **Adversarial Attacks Are $2.4\times\text{–}3.2\times$ Stronger Than Random Noise:** White-box 10-step PGD attacks on the agent's Critic break policies at $2.4\times\text{–}3.2\times$ smaller budgets than random Gaussian noise and induce twice the action deviation $\|\pi(\tilde{s}) - \pi(s)\|_2$.
-* **Asymmetric Physics & Task Mechanics:** Heavier body masses ($\ge 1.31\times$ on `Walker2d`) break policies rapidly due to actuator torque saturation, whereas lighter masses never drop below $50\%$. Low friction ($0.22\times$) causes `Walker2d-v5` to slip and fall, while `HalfCheetah-v5` retains $62\%$ of its score even at $0.1\times$ friction.
+* **Action Delay is Catastrophic:** A single step of latency reduces return by **31%** on `Walker2d-v5` and **70%** on `HalfCheetah-v5`; 2 steps causes total failure (0% score).
+* **Adversarial Attacks Are 2.4× to 3.2× Stronger Than Random Noise:** White-box 10-step PGD attacks on the agent's Critic break policies at 2.4× to 3.2× smaller budgets than random Gaussian noise and induce twice the action deviation $\lVert\pi(\tilde{s}) - \pi(s)\rVert_2$.
+* **Asymmetric Physics & Task Mechanics:** Heavier body masses ($\ge 1.31\times$ on `Walker2d`) break policies rapidly due to actuator torque saturation, whereas lighter masses never drop below 50%. Low friction (0.22×) causes `Walker2d-v5` to slip and fall, while `HalfCheetah-v5` retains 62% of its score even at 0.1× friction.
 
 ---
 
