@@ -10,17 +10,17 @@
 In standard Reinforcement Learning, an agent is trained and tested in the **exact same Markov Decision Process (MDP)**:
 
 $$
-\mathcal{M}_{\mathrm{train}} = (\mathcal{S}, \mathcal{A}, P_{\mathrm{train}}, R, \gamma)
+M_{\mathrm{train}} = (\mathcal{S}, \mathcal{A}, P_{\mathrm{train}}, R, \gamma)
 $$
 
-When deployed on a physical system ($\mathcal{M}_{\mathrm{test}} \neq \mathcal{M}_{\mathrm{train}}$), three assumptions break:
-1. **Imperfect / Attacked Sensors:** Observations are corrupted by random noise or targeted adversarial attacks ($\tilde{s}_t \neq s_t$).
-2. **Actuation Latency:** Motor commands experience communication or mechanical delay ($\tilde{a}_t = a_{t-k}$).
+When deployed on a physical system ($M_{\mathrm{test}} \neq M_{\mathrm{train}}$), three assumptions break:
+1. **Imperfect / Attacked Sensors:** Observations are corrupted by random noise or targeted adversarial attacks ($\tilde s_t \neq s_t$).
+2. **Actuation Latency:** Motor commands experience communication or mechanical delay ($\tilde a_t = a_{t-k}$).
 3. **Shifted Physics (Sim-to-Real Gap):** Payload mass, inertia, and ground friction differ from training ($P_{\mathrm{test}} \neq P_{\mathrm{train}}$).
 
 ### Core Research Questions
-* **RQ1 (Mid-Sem Focus — Diagnosis):** *When we take a clean-trained RL policy and gradually increase disturbance intensity across different channels, which shift breaks the agent fastest, and why?*
-* **RQ2 & RQ3 (End-Sem Focus — Defense & Transfer):** *Does a robustness strategy trained for one disturbance channel transfer to unseen channels, and can we train a unified multi-channel defense?*
+* **RQ1 (Mid-Sem Focus — Diagnosis):** When we take a clean-trained RL policy and gradually increase disturbance intensity across different channels, which shift breaks the agent fastest, and why?
+* **RQ2 & RQ3 (End-Sem Focus — Defense & Transfer):** Does a robustness strategy trained for one disturbance channel transfer to unseen channels, and can we train a unified multi-channel defense?
 
 ---
 
@@ -66,21 +66,21 @@ flowchart LR
 
 | # | Channel | Disturbance | Mathematical Formulation | Intensity Unit ($\epsilon$) | Effect on MDP |
 | :-: | :--- | :--- | :--- | :--- | :--- |
-| **1** | **Sensor** | Random Noise (`obs_noise`) | $\tilde{s}_t = s_t + \epsilon \sigma_s \odot \mathcal{N}(0, I)$ | Multiple of state std $\sigma_s$ | Corrupts policy input $\pi(\tilde{s}_t)$ only; true physics unchanged. |
-| **2** | **Sensor** | Adversarial Attack (`obs_adv`) | $\tilde{s}_t = s_t + \arg\min_{\lvert\delta_i\rvert \le \epsilon \sigma_{s,i}} Q(s_t, \pi(s_t + \delta))$ | Multiple of state std $\sigma_s$ | 10-step White-Box PGD finds worst-case sensor illusion. |
-| **3** | **Actuator** | Action Delay (`act_delay`) | $\tilde{a}_t = a_{t-\epsilon}$ (FIFO queue) | Control steps ($0, 1, 2, 3, 4$) | Breaks Markov property; policy acts on stale state. |
+| **1** | **Sensor** | Random Noise (`obs_noise`) | $\tilde s_t = s_t + \epsilon \sigma_s \odot \mathcal{N}(0, I)$ | Multiple of state std $\sigma_s$ | Corrupts policy input $\pi(\tilde s_t)$ only; true physics unchanged. |
+| **2** | **Sensor** | Adversarial Attack (`obs_adv`) | $\tilde s_t = s_t + \arg\min_{\lvert\delta_i\rvert \le \epsilon \sigma_{s,i}} Q(s_t, \pi(s_t + \delta))$ | Multiple of state std $\sigma_s$ | 10-step White-Box PGD finds worst-case sensor illusion. |
+| **3** | **Actuator** | Action Delay (`act_delay`) | $\tilde a_t = a_{t-\epsilon}$ (FIFO queue) | Control steps ($0, 1, 2, 3, 4$) | Breaks Markov property; policy acts on stale state. |
 | **4** | **Physics** | Body Mass (`mass`) | $m_b \leftarrow \epsilon m_b, \quad I_b \leftarrow \epsilon I_b$ | Multiplier (0.4× to 2.5×) | Alters true transition kernel $P_{\mathrm{test}}(s' \mid s, a)$. |
 | **5** | **Physics** | Ground Friction (`friction`) | $\mu_{\mathrm{slide}} \leftarrow \epsilon \mu_{\mathrm{slide}}$ | Multiplier (0.1× to 3.0×) | Alters foot-ground contact dynamics $P_{\mathrm{test}}(s' \mid s, a)$. |
 
-*(Note: Why is Reward Corruption not tested here? Because at test time, weights are frozen and $\pi_\theta(s)$ never reads rewards $r_t$. Reward corruption only affects training-time Bellman updates.)*
+> **Note:** Why is Reward Corruption not tested here? Because at test time, weights are frozen and $\pi_\theta(s)$ never reads rewards $r_t$. Reward corruption only affects training-time Bellman updates.
 
 ---
 
 ## Slide 4: Main Results — Degradation Curves Across All 5 Disturbances
 
-We normalize every perturbed score by the agent's own clean baseline score ($\bar{J} = J_{\mathrm{perturbed}} / J_{\mathrm{clean}}$) and measure:
-* **Degradation Onset** ($\epsilon_{80}$): Intensity where normalized score $\bar{J}$ drops below **80%** (20% loss).
-* **Breaking Point** ($\epsilon_{50}$): Intensity where normalized score $\bar{J}$ drops below **50%** (red dashed line).
+We normalize every perturbed score by the agent's own clean baseline score ($\bar J = J_{\mathrm{perturbed}} / J_{\mathrm{clean}}$) and measure:
+* **Degradation Onset** ($\epsilon_{80}$): Intensity where normalized score $\bar J$ drops below **80%** (20% loss).
+* **Breaking Point** ($\epsilon_{50}$): Intensity where normalized score $\bar J$ drops below **50%** (red dashed line).
 
 ![Normalized Degradation Curves](figures/degradation_all.png)
 
@@ -121,7 +121,7 @@ We normalize every perturbed score by the agent's own clean baseline score ($\ba
   * Clean `Walker2d-v5` falls in only **6.7%** of episodes.
   * Under adversarial sensor attack ($\epsilon = 0.2$), falls surge to **77%** (and **100%** at $\epsilon = 0.3$).
   * Under action delay, **2 steps of delay causes a 100% fall rate**.
-* **Right Panel — Policy Action Deviation** ($\lVert\pi_\theta(\tilde{s}) - \pi_\theta(s)\rVert_2$):
+* **Right Panel — Policy Action Deviation** ($\lVert\pi_\theta(\tilde s) - \pi_\theta(s)\rVert_2$):
   * Measures how much the corrupted sensor reading changes the Actor's motor command.
   * At every perturbation size $\epsilon$, the adversarial attack induces **nearly 2× larger action changes** than random noise, proving it exploits high-sensitivity (large local Lipschitz) directions of the policy network.
 

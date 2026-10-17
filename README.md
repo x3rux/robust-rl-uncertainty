@@ -12,7 +12,7 @@
 
 ## Project Overview
 
-Standard Deep Reinforcement Learning agents are trained and evaluated in identical, noise-free simulation environments ($\mathcal{M}_{\text{test}} = \mathcal{M}_{\text{train}}$). In real-world deployment, agents face sensor noise, adversarial spoofing, actuation latency, and shifted physical parameters.
+Standard Deep Reinforcement Learning agents are trained and evaluated in identical, noise-free simulation environments ($M_{\mathrm{test}} = M_{\mathrm{train}}$). In real-world deployment, agents face sensor noise, adversarial spoofing, actuation latency, and shifted physical parameters.
 
 In this mid-semester phase, we train **Soft Actor-Critic (SAC)** baseline policies on two contrasting continuous-control MuJoCo locomotion benchmarks—**`Walker2d-v5`** (an upright bipedal walker vulnerable to falling) and **`HalfCheetah-v5`** (a mechanically stable planar runner)—and systematically stress-test them across **five graded disturbances** spanning three interaction channels:
 
@@ -31,7 +31,7 @@ In this mid-semester phase, we train **Soft Actor-Critic (SAC)** baseline polici
 ![Normalized Degradation Curves](presentation/figures/degradation_all.png)
 
 * **Action Delay is Catastrophic:** A single step of latency reduces return by **31%** on `Walker2d-v5` and **70%** on `HalfCheetah-v5`; 2 steps causes total failure (0% score).
-* **Adversarial Attacks Are 2.4× to 3.2× Stronger Than Random Noise:** White-box 10-step PGD attacks on the agent's Critic break policies at 2.4× to 3.2× smaller budgets than random Gaussian noise and induce twice the action deviation $\lVert\pi(\tilde{s}) - \pi(s)\rVert_2$.
+* **Adversarial Attacks Are 2.4× to 3.2× Stronger Than Random Noise:** White-box 10-step PGD attacks on the agent's Critic break policies at 2.4× to 3.2× smaller budgets than random Gaussian noise and induce twice the action deviation $\lVert\pi(\tilde s) - \pi(s)\rVert_2$.
 * **Asymmetric Physics & Task Mechanics:** Heavier body masses ($\ge 1.31\times$ on `Walker2d`) break policies rapidly due to actuator torque saturation, whereas lighter masses never drop below 50%. Low friction (0.22×) causes `Walker2d-v5` to slip and fall, while `HalfCheetah-v5` retains 62% of its score even at 0.1× friction.
 
 ---

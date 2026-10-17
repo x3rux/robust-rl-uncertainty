@@ -190,7 +190,7 @@ Two failure mechanisms are visible:
   37% at sensor-noise σ = 0.2, 77% under adversarial attack at ε = 0.2, and 100% at a two-step
   action delay.
 - **The policy reacts much more strongly to adversarial inputs.** Under attack, the action
-  deviation $\lVert\pi(\tilde{s}) - \pi(s)\rVert_2$ at a given ε is about **twice** as large as under
+  deviation $\lVert\pi(\tilde s) - \pi(s)\rVert_2$ at a given ε is about **twice** as large as under
   random noise.
 
 ## 6. Discussion
