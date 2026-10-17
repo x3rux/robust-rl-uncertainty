@@ -4,7 +4,7 @@
 
 ---
 
-## Slide 1: Problem Statement & Motivation
+## Problem Statement & Motivation
 
 ### Why Standard RL Fails in the Real World
 In standard Reinforcement Learning, an agent is trained and tested in the **exact same Markov Decision Process (MDP)**:
@@ -24,7 +24,7 @@ When deployed on a physical system ($M_{\mathrm{test}} \neq M_{\mathrm{train}}$)
 
 ---
 
-## Slide 2: Environments & Baseline Algorithm (SAC)
+## Environments & Baseline Algorithm (SAC)
 
 ### Two Contrasting Continuous-Control Benchmarks (MuJoCo)
 Both environments share the exact same dimensions (**17-D continuous state space** $\mathbb{R}^{17}$, **6-D continuous action space** $[-1, 1]^6$), isolating the role of **mechanical stability**:
@@ -52,7 +52,7 @@ Both environments share the exact same dimensions (**17-D continuous state space
 
 ---
 
-## Slide 3: Experimental Methodology — The 5 Disturbances
+## Experimental Methodology — The 5 Disturbances
 
 We freeze the trained Actor policy $\pi_\theta(s)$ and stress-test it across **5 graded disturbances** spanning **3 channels** (2,580 evaluation episodes using **Common Random Numbers** so initial states are identical across all tests):
 
@@ -76,7 +76,7 @@ flowchart LR
 
 ---
 
-## Slide 4: Main Results — Degradation Curves Across All 5 Disturbances
+## Main Results — Degradation Curves Across All 5 Disturbances
 
 We normalize every perturbed score by the agent's own clean baseline score ($\bar J = J_{\mathrm{perturbed}} / J_{\mathrm{clean}}$) and measure:
 * **Degradation Onset** ($\epsilon_{80}$): Intensity where normalized score $\bar J$ drops below **80%** (20% loss).
@@ -102,7 +102,7 @@ We normalize every perturbed score by the agent's own clean baseline score ($\ba
 
 ---
 
-## Slide 5: Deep Dive — Random Noise vs. Adversarial Attack & Failure Mechanics
+## Deep Dive — Random Noise vs. Adversarial Attack & Failure Mechanics
 
 ### 1. Random Gaussian Noise vs. White-Box PGD Critic Attack
 
@@ -127,7 +127,7 @@ We normalize every perturbed score by the agent's own clean baseline score ($\ba
 
 ---
 
-## Slide 6: Summary Heatmaps & End-Semester Roadmap
+## Summary Heatmaps & End-Semester Roadmap
 
 ### Retained Performance Summary (Moderate vs. Severe Disturbances)
 
