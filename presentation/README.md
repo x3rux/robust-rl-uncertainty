@@ -141,15 +141,13 @@ We normalize every perturbed score by the agent's own clean baseline score ($\ba
 | ![Moderate Heatmap](figures/heatmap_moderate.png) | ![Severe Heatmap](figures/heatmap_severe.png) |
 
 ### Key Takeaways from Mid-Semester Phase
-1. **Action Delay is #1 Most Damaging:** Memoryless Markovian policies $\pi(s_t)$ cannot handle pipelined action latency. `HalfCheetah-v5` fails faster per step ($\epsilon_{50}=0.72$) than `Walker2d-v5` ($\epsilon_{50}=1.28$) because its control step is 50 ms vs. 8 ms (6.25× longer physical lag per step).
+1. **Action Delay is #1 Most Damaging (Control-Frequency Paradox):** Memoryless Markovian policies $\pi(s_t)$ lose the Markov property under queued latency. Even though `HalfCheetah-v5` cannot fall, it fails faster per step ($\epsilon_{50}=0.72$) than bipedal `Walker2d-v5` ($\epsilon_{50}=1.28$) because its control step is 50 ms vs. 8 ms (6.25× longer physical lag per step).
 2. **Average-Case vs. Worst-Case Robustness:** Surviving random Gaussian noise up to $\sigma = 0.40$ gives a false sense of security; targeted PGD attacks break the same policy at $\epsilon = 0.13$ to $0.16$.
-3. **Physics Asymmetry & Task Mechanics:** Heavier mass hurts far more than lighter mass due to torque saturation; friction shifts hurt balancing bipeds (`Walker2d`) far more than planar runners (`HalfCheetah`).
+3. **Iso-Fragility Calibration:** Mapping $\epsilon_{50}$ across all 5 channels aligns incompatible physical units into a single equal-difficulty scale ($1.0\times \epsilon_{50}$ = 50% score drop), enabling fair cross-channel transfer evaluation.
 
-### Roadmap for End-Semester Phase (From Diagnosis to Defense)
-1. **Implement Specialized Robust Training Strategies:**
-   * *Sensor Channel:* Gaussian noise augmentation & Lipschitz smoothness regularization (SA-SAC).
-   * *Actuator/Dynamics Channel:* Action-history stacking & Domain Randomization over mass/friction.
-   * *Distributionally Robust Critic:* Single-trajectory KL-dual pessimistic backup (Liang et al., ICML 2024).
-   * *Training-Time Reward Corruption:* Uncertainty-weighted TD loss (Ye et al., ICML 2024).
-2. **Cross-Robustness Transfer Matrix:** Train on defense $k$, test on disturbance $k'$ at calibrated magnitudes to test whether robustness transfers across channels.
-3. **Proposed Unified Defense:** A **Multi-Channel Stochastic Adversary** (extending ATSA, Zhou et al., ICML 2025) that maximizes adversary entropy across sensor, action, and physics channels simultaneously.
+### Novel Hypotheses & End-Semester Roadmap (From Diagnosis to Defense)
+1. **Novel Scientific Discovery — Cross-Channel Interference & Negative Transfer Matrix:**
+   * *Smoothness vs. Reflex Hypothesis:* Defending against sensor attacks via Lipschitz policy smoothing ($\lVert\pi(\tilde s) - \pi(s)\rVert_2 \to 0$) may cause **negative transfer** on low-friction ice or heavy mass by making balance reflexes too sluggish.
+   * *Inertia vs. Latency Hypothesis:* Test whether Domain Randomization over limb mass/inertia provides positive transfer to 1-step action delay.
+2. **Novel Algorithmic Contribution — $\epsilon_{50}$-Calibrated Multi-Channel Stochastic Adversary:**
+   * Extending single-channel ATSA (Zhou et al., ICML 2025) and DRQ (Liang et al., ICML 2024), we normalize all perturbation channels by their empirical $\epsilon_{50}$ breaking points and train a maximum-entropy multi-channel adversary across sensor, delay, and physics channels simultaneously.
